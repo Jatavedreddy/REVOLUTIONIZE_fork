@@ -352,7 +352,7 @@ input, select {
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h2>Recycling Pickup Request</h2>
-      <form id="recycleForm">
+      <form id="recycleForm" action="connect.php" method="POST">
         <label for="name">Your Name</label>
         <input type="text" id="name" name="name" required>
         <label for="recycle_device">Selecting Recycle Device:</label>
@@ -396,17 +396,6 @@ input, select {
     function closeModal() {
       document.getElementById("myModal").style.display = "none";
     }
-
-    document.getElementById("recycleForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      var formData = new FormData(this);
-
-      formData.forEach(function(value, key) {
-        localStorage.setItem(key, value);
-      });
-
-      window.location.href = "bads.html";
-    });
   </script>
 </body>
 </html>

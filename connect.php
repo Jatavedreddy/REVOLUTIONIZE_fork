@@ -1,4 +1,6 @@
 <?php
+require_once 'config.php';
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Collect form data and sanitize it
@@ -18,6 +20,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Append the data to the file
     file_put_contents($file, $request_data, FILE_APPEND);
+// Credentials are loaded from config.php
+
+    $trelloUrl = "https://api.trello.com/1/cards";
+
+    $cardName = "Pickup Request: " . $name . " - " . $recycle_device;
+    $cardDesc = "Quantity: " . $quantity . "\nLocation: " . $location . "\nPickup Time: " . $pickup_time . "\nEmail: " . $email . "\nPhone: " . $phone;
+
+    $data = array(
+        'key' => $trelloApiKey,
+        'token' => $trelloApiToken,
+        'idList' => $trelloListId,
+        'name' => $cardName,
+        'desc' => $cardDesc
+    );
+
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        )
+    );
+    $context  = stream_context_create($options);
+    $result = file_get_contents($trelloUrl, false, $context);
+    // --------------------------
 
     // Optionally, you can send an email confirmation here
 
