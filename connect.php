@@ -24,6 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $trelloUrl = "https://api.trello.com/1/cards";
 
+    // Determine Label Color based on Waste Type (Priority)
+    // Medical = Red (High Priority), E-Waste = Yellow, Others = Blue
+    $labelColor = 'blue'; // Default
+    $medical_items = ['Needles', 'Syringes', 'Used gloves', 'Expired tablets', 'Unused vaccines', 'Disinfectants', 'Cleaning agents', 'Medicines', 'Dressings', 'Bandages'];
+    $ewaste_items = ['Battery', 'Mobile', 'Laptop', 'Wires', 'Power Banks', 'Printers', 'Cameras', 'Tablets'];
+    
+    if (in_array($recycle_device, $medical_items)) {
+        $labelColor = 'red';
+    } elseif (in_array($recycle_device, $ewaste_items)) {
+        $labelColor = 'yellow';
+    }
+
     $cardName = "Pickup Request: " . $name . " - " . $recycle_device;
     $cardDesc = "Quantity: " . $quantity . "\nLocation: " . $location . "\nPickup Time: " . $pickup_time . "\nEmail: " . $email . "\nPhone: " . $phone;
 
@@ -32,7 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'token' => $trelloApiToken,
         'idList' => $trelloListId,
         'name' => $cardName,
-        'desc' => $cardDesc
+        'desc' => $cardDesc,
+        'pos' => 'top',                 // Position: Top of the list
+        'due' => $pickup_time . ':00Z', // Due Date: From form input
+        'labels' => $labelColor         // Label: Color based on priority
     );
 
     $options = array(
